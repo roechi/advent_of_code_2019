@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from nose.tools import assert_equal
 
-from day_2.Intcode import run_program
+from day_2.IntcodeComputer import IntcodeComputer
 
 
 class TestRun_program(TestCase):
@@ -15,7 +15,9 @@ class TestRun_program(TestCase):
         ]
 
         for input_tuple in inputs:
-            assert_equal(run_program(input_tuple[0]), input_tuple[1])
+            computer = IntcodeComputer(input_tuple[0])
+            result = computer.run_program()
+            assert_equal(result, input_tuple[1])
 
     def test_result_for_first_part(self):
         t = open('../resources/input_2.txt')
@@ -23,7 +25,8 @@ class TestRun_program(TestCase):
         t.close()
         inputs = list(map(lambda x: int(x), lines[0].split(sep=',')))
 
-        result = run_program(inputs, adjusted_codes=[12,2])
+        computer = IntcodeComputer(inputs)
+        result = computer.run_program(parameters=[12,2])
         print('The value is: ' + str(result[0]))
 
     def test_result_for_second_part(self):
@@ -35,12 +38,11 @@ class TestRun_program(TestCase):
         original_inputs = list(map(lambda x: int(x), lines[0].split(sep=',')))
 
         result = 0
-
+        computer = IntcodeComputer(original_inputs)
         for i in range(100):
             for j in range(100):
-                inputs = original_inputs.copy()
 
-                result = run_program(inputs, adjusted_codes=[i, j])
+                result = computer.run_program(parameters=[i, j])
                 if result[0] == expected_value:
                     print('noun: ' + str(i) + ' verb: ' + str(j))
                     print('result is: ' + str(100 * i + j))
