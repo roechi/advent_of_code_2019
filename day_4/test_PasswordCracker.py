@@ -39,11 +39,42 @@ class TestPasswordCracker(TestCase):
         result = PasswordCracker.has_adjacent_equal_digits(123)
         assert_equals(result, False)
 
+    def test_has_at_least_one_pair_of_adjacent_equal_digits_that_is_not_part_of_larger_group(self):
+        result = PasswordCracker.has_at_least_one_pair_of_adjacent_equal_digits(1223)
+        assert_equals(result, True)
+
+        result = PasswordCracker.has_at_least_one_pair_of_adjacent_equal_digits(11223)
+        assert_equals(result, True)
+
+        result = PasswordCracker.has_at_least_one_pair_of_adjacent_equal_digits(12233)
+        assert_equals(result, True)
+
+        result = PasswordCracker.has_at_least_one_pair_of_adjacent_equal_digits(123)
+        assert_equals(result, False)
+
+        result = PasswordCracker.has_at_least_one_pair_of_adjacent_equal_digits(112233)
+        assert_equals(result, True)
+
+        result = PasswordCracker.has_at_least_one_pair_of_adjacent_equal_digits(123444)
+        assert_equals(result, False)
+
+        result = PasswordCracker.has_at_least_one_pair_of_adjacent_equal_digits(111122)
+        assert_equals(result, True)
+
     def test_result_of_part_one(self):
         start = 347312
         end = 805915
         digits = 6
 
         result = PasswordCracker.calculate_number_of_possibilities(start, end, digits)
+
+        print('The amount of possibilities for the password is: ' + str(result))
+
+    def test_result_of_part_two(self):
+        start = 347312
+        end = 805915
+        digits = 6
+
+        result = PasswordCracker.calculate_number_of_possibilities_with_solitary_pair(start, end, digits)
 
         print('The amount of possibilities for the password is: ' + str(result))
