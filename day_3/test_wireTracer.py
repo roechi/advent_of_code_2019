@@ -50,4 +50,45 @@ class TestWireTracer(TestCase):
         for line in parsed_lines:
             tracer.add_wire(line)
 
-        print('The shortest distance to an intersection is: ' + str(tracer.get_closest_intersection_distance()))
+        print('The shortest Manhattan-Distance to the closest intersection is: ' + str(tracer.get_closest_intersection_distance()))
+
+    def test_get_shortest_path_length_to_intersection(self):
+        wire_one_one = ['R75', 'D30', 'R83', 'U83', 'L12', 'D49', 'R71', 'U7', 'L72']
+        wire_one_two = ['U62', 'R66', 'U55', 'R34', 'D71', 'R55', 'D58', 'R83']
+        expected_combined_length_one = 610
+
+        tracer_one = WireTracer()
+        tracer_one.add_wire(wire_one_one)
+        tracer_one.add_wire(wire_one_two)
+
+        shortest_one = tracer_one.get_shortest_path_to_intersection()
+        assert_equal(shortest_one, expected_combined_length_one)
+
+        wire_two_one = ['R98', 'U47', 'R26', 'D63', 'R33', 'U87', 'L62', 'D20', 'R33', 'U53', 'R51']
+        wire_two_two = ['U98', 'R91', 'D20', 'R16', 'D67', 'R40', 'U7', 'R15', 'U6', 'R7']
+        expected_combined_length_two = 410
+
+        tracer_two = WireTracer()
+        tracer_two.add_wire(wire_two_one)
+        tracer_two.add_wire(wire_two_two)
+
+        shortest_two = tracer_two.get_shortest_path_to_intersection()
+        assert_equal(shortest_two, expected_combined_length_two)
+
+    def test_result_part_two(self):
+        t = open('../resources/input_3.txt')
+        lines = t.readlines()
+        t.close()
+
+        parsed_lines = list()
+
+        for line in lines:
+            parsed_line = line.split(',')
+            parsed_lines.append(parsed_line)
+
+        tracer = WireTracer()
+
+        for line in parsed_lines:
+            tracer.add_wire(line)
+
+        print('The shortest distance to any intersection is: ' + str(tracer.get_shortest_path_to_intersection()))
