@@ -26,7 +26,7 @@ class TestRun_program(TestCase):
         inputs = list(map(lambda x: int(x), lines[0].split(sep=',')))
 
         computer = IntcodeComputer(inputs)
-        result = computer.run_program(parameters=[12,2])
+        result = computer.run_program(parameters=[12, 2])
         print('The value is: ' + str(result[0]))
 
     def test_result_for_second_part(self):
@@ -72,3 +72,22 @@ class TestRun_program(TestCase):
         original_inputs = list(map(lambda x: int(x), lines[0].split(sep=',')))
         computer = IntcodeComputer(original_inputs)
         computer.run_program(input=1)
+
+    def test_compare(self):
+        ### manual testing of various programs, check printed output to verify
+
+        inputs = [
+            3, 21, 1008, 21, 8, 20, 1005, 20, 22, 107, 8, 21, 20, 1006, 20, 31,
+            1106, 0, 36, 98, 0, 0, 1002, 21, 125, 20, 4, 20, 1105, 1, 46, 104,
+            999, 1105, 1, 46, 1101, 1000, 1, 20, 4, 20, 1105, 1, 46, 98, 99
+        ]
+        computer = IntcodeComputer(inputs)
+        computer.run_program(input=100)
+
+    def test_result_for_part_two_day_five(self):
+        t = open('../resources/input_5.txt')
+        lines = t.readlines()
+        t.close()
+        original_inputs = list(map(lambda x: int(x), lines[0].split(sep=',')))
+        computer = IntcodeComputer(original_inputs)
+        computer.run_program(input=5)

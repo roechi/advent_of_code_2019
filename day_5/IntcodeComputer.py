@@ -11,11 +11,9 @@ class IntcodeComputer:
                 memory[i + 1] = parameters[i]
 
         instruction_pointer = 0
-        steps_to_next_instruction = 0
-        while instruction_pointer < len(memory) - 1:
-            instruction_pointer += steps_to_next_instruction
-            if instruction_pointer + steps_to_next_instruction < len(memory) and memory[instruction_pointer] != 99:
-                steps_to_next_instruction = self.execute(memory, instruction_pointer, input)
+
+        while instruction_pointer < len(memory) - 1 and memory[instruction_pointer] != 99:
+                instruction_pointer = self.execute(memory, instruction_pointer, input)
 
         return memory
 
@@ -28,22 +26,52 @@ class IntcodeComputer:
             param_2 = IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 2)
             param_3 = memory[pointer + 3]
             memory[param_3] = param_1 + param_2
-            return 4
+            return pointer + 4
         elif op_code == 2:
             param_1 = IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 1)
             param_2 = IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 2)
             param_3 = memory[pointer + 3]
             memory[param_3] = param_1 * param_2
-            return 4
+            return pointer + 4
         elif op_code == 3:
             memory[memory[pointer + 1]] = input
-            return 2
+            return pointer + 2
         elif op_code == 4:
             param = IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 1)
             print(param)
-            return 2
+            return pointer + 2
+        elif op_code == 5:
+            if IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 1) != 0:
+                pointer = IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 2)
+            else:
+                pointer += 3
+            return pointer
+        elif op_code == 6:
+            if IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 1) == 0:
+                pointer = IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 2)
+            else:
+                pointer += 3
+            return pointer
+        elif op_code == 7:
+            param_1 = IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 1)
+            param_2 = IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 2)
+            param_3 = memory[pointer + 3]
+            if param_1 < param_2:
+                memory[param_3] = 1
+            else:
+                memory[param_3] = 0
+            return pointer + 4
+        elif op_code == 8:
+            param_1 = IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 1)
+            param_2 = IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 2)
+            param_3 = memory[pointer + 3]
+            if param_1 == param_2:
+                memory[param_3] = 1
+            else:
+                memory[param_3] = 0
+            return pointer + 4
         elif op_code == 99:
-            return 0
+            return pointer
         else:
             raise Exception('Received invalid opcode: ' + str(op_code))
 
