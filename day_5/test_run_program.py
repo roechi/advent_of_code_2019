@@ -51,10 +51,25 @@ class TestRun_program(TestCase):
                 break
 
     def test_opcode_3(self):
-        inputs = [3, 2, 4, 99, 0]
-        expected_outputs = [3, 2, 4, 99, 4]
+        inputs = [3, 2, 0]
+        expected_outputs = [3, 2, 99]
 
         computer = IntcodeComputer(inputs)
-        outputs = computer.run_program()
+        outputs = computer.run_program(input=99)
 
         assert_equal(outputs, expected_outputs)
+
+    def test_opcode_4(self):
+        inputs = [4, 2, 99]
+
+        computer = IntcodeComputer(inputs)
+        computer.run_program()
+
+    def test_result_for_part_one_day_5(self):
+        t = open('../resources/input_5.txt')
+        lines = t.readlines()
+        t.close()
+        original_inputs = list(map(lambda x: int(x), lines[0].split(sep=',')))
+
+        computer = IntcodeComputer(original_inputs)
+        computer.run_program(input=1)
