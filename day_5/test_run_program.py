@@ -70,6 +70,5 @@ class TestRun_program(TestCase):
         lines = t.readlines()
         t.close()
         original_inputs = list(map(lambda x: int(x), lines[0].split(sep=',')))
-
         computer = IntcodeComputer(original_inputs)
         computer.run_program(input=1)
