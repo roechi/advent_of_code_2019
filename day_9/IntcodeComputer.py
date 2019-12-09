@@ -2,9 +2,9 @@ class IntcodeComputer:
 
     def __init__(self, program: [int]) -> None:
         self.initial_memory = program.copy()
-        self.initial_memory.extend(0 for i in range(100*len(program)))
+        self.initial_memory.extend(0 for i in range(100 * len(program)))
         self.memory = program.copy()
-        self.memory.extend(0 for i in range(100*len(program)))
+        self.memory.extend(0 for i in range(100 * len(program)))
         self.instruction_pointer = 0
         self.relative_pointer = 0
 
@@ -44,21 +44,34 @@ class IntcodeComputer:
         op_code = int(str(memory[pointer])[-2:])
 
         if op_code == 1:
+            relative_shift = 0
+            if str(raw_op_code_with_modes)[0] == '2' and len(str(raw_op_code_with_modes)) > 4:
+                relative_shift = self.relative_pointer
+
             param_1 = self.get_param(memory, pointer, raw_op_code_with_modes, 1)
             param_2 = self.get_param(memory, pointer, raw_op_code_with_modes, 2)
             param_3 = memory[pointer + 3]
-            memory[param_3] = param_1 + param_2
+            memory[param_3 + relative_shift] = param_1 + param_2
             return pointer + 4
         elif op_code == 2:
+            relative_shift = 0
+            if str(raw_op_code_with_modes)[0] == '2' and len(str(raw_op_code_with_modes)) > 4:
+                relative_shift = self.relative_pointer
+
             param_1 = self.get_param(memory, pointer, raw_op_code_with_modes, 1)
             param_2 = self.get_param(memory, pointer, raw_op_code_with_modes, 2)
             param_3 = memory[pointer + 3]
-            memory[param_3] = param_1 * param_2
+            memory[param_3 + relative_shift] = param_1 * param_2
             return pointer + 4
         elif op_code == 3:
+            relative_shift = 0
+            if str(raw_op_code_with_modes)[0] == '2' and len(str(raw_op_code_with_modes)) > 2:
+                relative_shift = self.relative_pointer
+
             if not input:
                 raise AwaitingInput
-            memory[memory[pointer + 1]] = input.pop(0)
+            param = input.pop(0)
+            memory[memory[pointer + 1] + relative_shift] = param
             return pointer + 2
         elif op_code == 4:
             param = self.get_param(memory, pointer, raw_op_code_with_modes, 1)
@@ -71,28 +84,36 @@ class IntcodeComputer:
                 pointer += 3
             return pointer
         elif op_code == 6:
-            if IntcodeComputer.get_param(memory, pointer, raw_op_code_with_modes, 1) == 0:
+            if self.get_param(memory, pointer, raw_op_code_with_modes, 1) == 0:
                 pointer = self.get_param(memory, pointer, raw_op_code_with_modes, 2)
             else:
                 pointer += 3
             return pointer
         elif op_code == 7:
+            relative_shift = 0
+            if str(raw_op_code_with_modes)[0] == '2' and len(str(raw_op_code_with_modes)) > 4:
+                relative_shift = self.relative_pointer
+
             param_1 = self.get_param(memory, pointer, raw_op_code_with_modes, 1)
             param_2 = self.get_param(memory, pointer, raw_op_code_with_modes, 2)
             param_3 = memory[pointer + 3]
             if param_1 < param_2:
-                memory[param_3] = 1
+                memory[param_3 + relative_shift] = 1
             else:
-                memory[param_3] = 0
+                memory[param_3 + relative_shift] = 0
             return pointer + 4
         elif op_code == 8:
+            relative_shift = 0
+            if str(raw_op_code_with_modes)[0] == '2' and len(str(raw_op_code_with_modes)) > 4:
+                relative_shift = self.relative_pointer
+
             param_1 = self.get_param(memory, pointer, raw_op_code_with_modes, 1)
             param_2 = self.get_param(memory, pointer, raw_op_code_with_modes, 2)
             param_3 = memory[pointer + 3]
             if param_1 == param_2:
-                memory[param_3] = 1
+                memory[param_3 + relative_shift] = 1
             else:
-                memory[param_3] = 0
+                memory[param_3 + relative_shift] = 0
             return pointer + 4
         elif op_code == 9:
             param_1 = self.get_param(memory, pointer, raw_op_code_with_modes, 1)
@@ -106,12 +127,11 @@ class IntcodeComputer:
     def get_param(self, memory, pointer, raw_op_code_with_modes, num_of_param):
         mode = IntcodeComputer.get_parameter_modes(raw_op_code_with_modes, num_of_param - 1)
         if mode == 0:
-            print(memory[pointer + num_of_param])
             param = memory[memory[pointer + num_of_param]]
         elif mode == 1:
             param = memory[pointer + num_of_param]
         elif mode == 2:
-            param = self.relative_pointer
+            param = memory[memory[pointer + num_of_param] + self.relative_pointer]
         else:
             raise Exception('Received invalid param mode: {}'.format(mode))
         return param

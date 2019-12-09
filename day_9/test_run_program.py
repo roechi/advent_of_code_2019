@@ -140,8 +140,8 @@ class TestRun_program(TestCase):
         phase_sequence = [9, 7, 8, 5, 6]
         expected_result = 18216
         program = [3, 52, 1001, 52, -5, 52, 3, 53, 1, 52, 56, 54, 1007, 54, 5, 55, 1005, 55, 26, 1001, 54,
-        -5, 54, 1105, 1, 12, 1, 53, 54, 53, 1008, 54, 0, 55, 1001, 55, 1, 55, 2, 53, 55, 53, 4,
-        53, 1001, 56, -1, 56, 1005, 56, 6, 99, 0, 0, 0, 0, 10]
+                   -5, 54, 1105, 1, 12, 1, 53, 54, 53, 1008, 54, 0, 55, 1001, 55, 1, 55, 2, 53, 55, 53, 4,
+                   53, 1001, 56, -1, 56, 1005, 56, 6, 99, 0, 0, 0, 0, 10]
 
         circuit = AmplificationCircuit(5, program)
         signal = circuit.amplify_with_feedback(phase_sequence)
@@ -168,7 +168,39 @@ class TestRun_program(TestCase):
         best_setting, best_signal = circuit.find_best_phase_settings_feedback()
         print('The highest possible signal with feedback is: ' + str(best_signal))
 
+    def test_result_part_one_day_nine(self):
+        t = open('../resources/input_9.txt')
+        lines = t.readlines()
+        t.close()
+        original_inputs = list(map(lambda x: int(x), lines[0].split(sep=',')))
+        computer = IntcodeComputer(original_inputs)
+
+        output = computer.run_program(input=[1])[1]
+        print('Result: {}'.format(output))
+        assert_equal(output, [3409270027])
+
+    def test_result_part_two_day_nine(self):
+        t = open('../resources/input_9.txt')
+        lines = t.readlines()
+        t.close()
+        original_inputs = list(map(lambda x: int(x), lines[0].split(sep=',')))
+        computer = IntcodeComputer(original_inputs)
+
+        output = computer.run_program(input=[2])[1]
+        print('Resulting coordinates of the distress signal: {}'.format(output))
+
     def test_opcode_9_and_relative(self):
         program = [109, 1, 204, -1, 1001, 100, 1, 100, 1008, 100, 16, 101, 1006, 101, 0, 99]
         computer = IntcodeComputer(program)
         print(computer.run_program()[1])
+
+    def test_opcode_9_and_relative_2(self):
+        program = [1102, 34915192, 34915192, 7, 4, 7, 99, 0]
+        computer = IntcodeComputer(program)
+        print(computer.run_program()[1])
+
+    def test_opcode_9_and_relative_3(self):
+        program = [104, 1125899906842624, 99]
+        computer = IntcodeComputer(program)
+        print(computer.run_program()[1])
+
