@@ -89,3 +89,5 @@ class TestAsteroidScanner(TestCase):
 
         best_vec, visible = scanner.determine_best()
         print('The best possible position is {} with {} visible asteroids.'.format(best_vec, visible))
+
+

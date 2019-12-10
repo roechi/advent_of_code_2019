@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.linalg import norm
 from numpy import dot
-
+import sys
 
 class AsteroidScanner:
     def __init__(self, positions: [tuple] = None) -> None:
@@ -30,7 +30,7 @@ class AsteroidScanner:
         visible.remove(vec_to_check)
         return visible
 
-    def determine_occlusions(self, vec_to_check: tuple):
+    def determine_occlusions(self, vec_to_check: tuple, max_occlusions: int = None):
         vecs = list(self.vecs.copy())
         vecs.remove(vec_to_check)
 
@@ -48,8 +48,14 @@ class AsteroidScanner:
                     if norm(np.array(vec_to_check) - np.array(v1)) < norm(np.array(vec_to_check) - np.array(v2)):
                         occlusions.add(v2)
                         new_vecs_to_remove.add(v2)
+                        if max_occlusions and len(occlusions) > max_occlusions:
+                            print('Stopping early, max occlusions exceeded: {}'.format(len(occlusions)))
+                            return occlusions
                     else:
                         occlusions.add(v1)
+                        if max_occlusions and len(occlusions) > max_occlusions:
+                            print('Stopping early, max occlusions exceeded: {}'.format(len(occlusions)))
+                            return occlusions
                         break
             for occluded_vec in new_vecs_to_remove:
                 vecs.remove(occluded_vec)
@@ -59,16 +65,17 @@ class AsteroidScanner:
     def determine_best(self):
         current_best = None
         current_most_visible = 0
-
+        max_occlusions = sys.maxsize
         counter = 0
 
         for vec in self.vecs:
-            visible = self.determine_visible(vec)
-            if len(visible) > current_most_visible:
-                current_most_visible = len(visible)
+            occlusions = len(self.determine_occlusions(vec, max_occlusions=max_occlusions))
+            if occlusions < max_occlusions:
+                max_occlusions = occlusions
                 current_best = vec
+                current_most_visible = len(self.vecs) - max_occlusions - 1
             counter += 1
-            print('Positions to remaining: {}'.format(len(self.vecs) - counter))
+            print('Positions remaining: {}'.format(len(self.vecs) - counter))
         return current_best, current_most_visible
 
     @staticmethod
