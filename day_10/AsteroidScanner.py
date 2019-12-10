@@ -3,6 +3,7 @@ from numpy.linalg import norm
 from numpy import dot
 import sys
 
+
 class AsteroidScanner:
     def __init__(self, positions: [tuple] = None) -> None:
         if positions:
@@ -77,6 +78,42 @@ class AsteroidScanner:
             counter += 1
             print('Positions remaining: {}'.format(len(self.vecs) - counter))
         return current_best, current_most_visible
+
+    def vaporize(self, station_pos: tuple):
+        laser_direction = (np.array((0, -1)) + np.array(station_pos)) * np.array((1, -1))
+
+        count = 0
+
+        while len(self.vecs) > 1:
+            visible = self.determine_visible(station_pos)
+            l = list(visible)
+            list_right = list()
+            for v in visible:
+                if v[0] >= laser_direction[0]:
+                    list_right.append(v)
+            list_left = list()
+            for v in visible:
+                if v[0] < laser_direction[0]:
+                    list_left.append(v)
+
+            list_right.sort(key=lambda a: AsteroidScanner.cosine_distance(np.array(a) - np.array(station_pos),
+                                                                          laser_direction - np.array(station_pos)), reverse=True)
+            list_left.sort(key=lambda a: AsteroidScanner.cosine_distance(np.array(a) - np.array(station_pos),
+                                                                          laser_direction - np.array(station_pos)))
+            l = list()
+            l.extend(list_right)
+            l.extend(list_left)
+            for a in l:
+                print('{} -> cos: {}'.format(a, AsteroidScanner.cosine_distance(np.array(a) - np.array(station_pos),
+                                                                                laser_direction - np.array(
+                                                                                    station_pos))))
+
+
+            print('Laser: {}'.format(laser_direction))
+            for a in l:
+                count += 1
+                print('The {}. asteroid to be vaporized is at {}.'.format(count, a))
+                self.vecs.remove(a)
 
     @staticmethod
     def cosine_distance(vec1, vec2) -> float:

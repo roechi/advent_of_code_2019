@@ -77,6 +77,49 @@ class TestAsteroidScanner(TestCase):
         assert_equal(best_vec, (1, 2))
         assert_equal(visible, 35)
 
+    def test_vaporize_data_1(self):
+        data = ['.#....#####...#..',
+                '##...##.#####..##',
+                '##...#...#.#####.',
+                '..#.....#...###..',
+                '..#.#.....#....##']
+
+        station = (8, 3)
+        scanner = AsteroidScanner()
+        scanner.read_data(data)
+
+        scanner.vaporize(station)
+
+    def test_vaporize_data_2(self):
+        data = ['.#..##.###...#######',
+                '##.############..##.',
+                '.#.######.########.#',
+                '.###.#######.####.#.',
+                '#####.##.#.##.###.##',
+                '..#####..#.#########',
+                '####################',
+                '#.####....###.#.#.##',
+                '##.#################',
+                '#####.##.###..####..',
+                '..######..##.#######',
+                '####.##.####...##..#',
+                '.#####..#.######.###',
+                '##...#.##########...',
+                '#.##########.#######',
+                '.####.#.###.###.#.##',
+                '....##.##.###..#####',
+                '.#.#.###########.###',
+                '#.#.#.#####.####.###',
+                '###.##.####.##.#..##']
+
+
+        station = (11, 13)
+        scanner = AsteroidScanner()
+        scanner.read_data(data)
+        #best, visible = scanner.determine_best()
+
+        scanner.vaporize(station)
+
     def test_result_part_one(self):
         t = open('../resources/input_10.txt')
         lines = t.readlines()
@@ -89,5 +132,18 @@ class TestAsteroidScanner(TestCase):
 
         best_vec, visible = scanner.determine_best()
         print('The best possible position is {} with {} visible asteroids.'.format(best_vec, visible))
+        #The best possible position is (28, 29) with 340 visible asteroids.
 
 
+    def test_result_part_two(self):
+        t = open('../resources/input_10.txt')
+        lines = t.readlines()
+        t.close()
+
+        lines = list(map(str.strip, lines))
+
+        scanner = AsteroidScanner()
+        scanner.read_data(lines)
+
+        scanner.vaporize((28, 29))
+        #The best possible position is (28, 29) with 340 visible asteroids.
