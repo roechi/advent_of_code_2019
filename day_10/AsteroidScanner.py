@@ -2,6 +2,7 @@ import numpy as np
 from numpy.linalg import norm
 from numpy import dot
 import sys
+from math import atan2
 
 
 class AsteroidScanner:
@@ -63,21 +64,32 @@ class AsteroidScanner:
 
         return occlusions
 
-    def determine_best(self):
-        current_best = None
-        current_most_visible = 0
-        max_occlusions = sys.maxsize
-        counter = 0
+    def determine_visible_improved(self, pos: tuple):
+        others = self.vecs.copy()
+        others.remove(pos)
 
-        for vec in self.vecs:
-            occlusions = len(self.determine_occlusions(vec, max_occlusions=max_occlusions))
-            if occlusions < max_occlusions:
-                max_occlusions = occlusions
-                current_best = vec
-                current_most_visible = len(self.vecs) - max_occlusions - 1
-            counter += 1
-            print('Positions remaining: {}'.format(len(self.vecs) - counter))
-        return current_best, current_most_visible
+        n_pos = np.array(pos)
+
+        angles = set()
+
+        for o in others:
+            o_adjusted = np.array(o) - n_pos
+            angle = atan2(o_adjusted[0], o_adjusted[1])
+            angles.add(angle)
+
+        return len(angles)
+
+    def determine_best(self):
+        current_best_vec = None
+        current_most_visible = 0
+
+        for v in self.vecs:
+            visible = self.determine_visible_improved(v)
+            if visible > current_most_visible:
+                current_best_vec = v
+                current_most_visible = visible
+
+        return current_best_vec, current_most_visible
 
     def vaporize(self, station_pos: tuple):
         laser_direction = (np.array((0, -1)) + np.array(station_pos)) * np.array((1, -1))

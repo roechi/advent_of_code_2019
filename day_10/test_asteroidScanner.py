@@ -26,17 +26,18 @@ class TestAsteroidScanner(TestCase):
         expected = {(1, 2), (3, 2), (4, 4), (4, 3), (2, 2), (4, 2), (1, 0), (3, 4), (0, 2), (4, 0)}
         assert_equal(expected, scanner.vecs)
 
-        visible = scanner.determine_visible((4, 2))
-        assert_equal(len(visible), 5)
+        visible = scanner.determine_visible_improved((4, 2))
+        assert_equal(visible, 5)
 
         visible = scanner.determine_visible((1, 0))
         assert_equal(len(visible), 7)
 
-        visible = scanner.determine_visible((4, 4))
-        assert_equal(len(visible), 7)
+        visible = scanner.determine_visible_improved((4, 4))
+        assert_equal(visible, 7)
 
-        visible = scanner.determine_visible((3, 4))
-        assert_equal(len(visible), 8)
+        visible = scanner.determine_visible_improved((3, 4))
+        assert_equal(visible, 8)
+
 
 
     def test_read_asteroid_data_2(self):
@@ -72,10 +73,12 @@ class TestAsteroidScanner(TestCase):
         scanner = AsteroidScanner()
         scanner.read_data(data)
 
-        best_vec, visible = scanner.determine_best()
+        #best_vec, visible = scanner.determine_best()
 
-        assert_equal(best_vec, (1, 2))
-        assert_equal(visible, 35)
+        #assert_equal(best_vec, (1, 2))
+        #assert_equal(visible, 35)
+
+        assert_equal(35, scanner.determine_visible_improved((1,2)))
 
     def test_vaporize_data_1(self):
         data = ['.#....#####...#..',
@@ -133,6 +136,8 @@ class TestAsteroidScanner(TestCase):
         best_vec, visible = scanner.determine_best()
         print('The best possible position is {} with {} visible asteroids.'.format(best_vec, visible))
         #The best possible position is (28, 29) with 340 visible asteroids.
+        assert_equal(best_vec, (28, 29))
+        assert_equal(visible, 340)
 
 
     def test_result_part_two(self):
