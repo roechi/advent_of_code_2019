@@ -3,7 +3,7 @@ import numpy as np
 from numpy import dot
 
 class PaintingRobot:
-    def __init__(self, program: [int]) -> None:
+    def __init__(self, program: [int], hull_state: dict = None) -> None:
         self.computer = IntcodeComputer(program)
         self.position = (0, 0)
         self.visited_panels = dict()
@@ -16,6 +16,10 @@ class PaintingRobot:
         rot_right = np.array([0, 1, -1, 0])
         rot_right = rot_right.reshape([2, 2])
         self.rot_right = rot_right
+
+        if hull_state:
+            for k in hull_state.keys():
+                self.visited_panels[k] = hull_state[k]
 
     def paint(self):
 
