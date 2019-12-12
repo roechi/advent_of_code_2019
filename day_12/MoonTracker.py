@@ -38,20 +38,33 @@ class MoonTracker:
         states = list()
         state = list()
         for b in self.bodies:
-            state.append([b[0].copy(), b[1].copy()])
+            state.append(np.concatenate(b))
 
-        states.append(state)
+        states.append(tuple(np.concatenate(state)))
 
         while not repeated:
             step += 1
+            if step % 1000 == 0:
+                print('Step: {}'.format(step))
             self.apply_step()
-            if self.bodies in states:
-                repeated = True
-            state = list()
+            s = list()
             for b in self.bodies:
-                state.append([b[0].copy(), b[1].copy()])
+                s.append(np.concatenate(b))
 
-            states.append(state)
+            if tuple(np.concatenate(s)) in states:
+                return step
+            else:
+                states.append(tuple(np.concatenate(s)))
 
         return step
 
+    @staticmethod
+    def states_equal(s1: [[np.array]], s2: [[np.array]]) -> bool:
+
+        for i in range(len(s1)):
+            if (s1[i][0] != s2[i][0]).any():
+                return False
+            if (s1[i][0] != s2[i][0]).any():
+                return False
+
+        return True

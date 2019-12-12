@@ -38,3 +38,12 @@ def test_result_part_one():
 
     energy = tracker.calc_system_energy()
     print('Total energy: {}'.format(energy))
+
+def test_result_part_two():
+    moons = [(15, -2, -6),
+             (-5, -4, -11),
+             (0, -6, 0),
+             (5, 9, 6)]
+    tracker = MoonTracker(moons)
+    steps = tracker.simulate_until_state_repeats()
+    print('Steps until state repeats: {}'.format(steps))
