@@ -51,7 +51,7 @@ class MoonTracker:
                     seen_coords[d].add(str(d_state))
 
             self.apply_step()
-            step +=1
+            step += 1
 
         return reduce(lambda step1, step2: MoonTracker.lcm(step1, step2), coords_have_repeated)
 
