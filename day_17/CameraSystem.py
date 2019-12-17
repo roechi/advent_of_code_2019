@@ -43,15 +43,46 @@ class CameraSystem:
     def rescue(self):
         mem, out, exit_code = self.computer.run_program(parameters=[2])
 
-        s = reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out))
+        #s = reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out))
 
-        main = list(map(lambda c: ord(c), 'A,B,C,B,A,C\n'))
+        main = 'B,B,A,C,B,C,A,C,B,A\n'
+        A = 'L,6,L,4,R,8,R,8\n'
+        B = 'L,4,L,10,L,6\n'
+        C = 'L,6,R,8,L,10,L,8,L,8\n'
+
+        main = self.to_input(main)
+        a = self.to_input(A)
+        b = self.to_input(B)
+        c = self.to_input(C)
 
         mem, out, exit_code = self.computer.run_program(input=main, reset_memory=False, reset_pointer=False,
                                                         reset_relative_pointer=False)
 
-        s = reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out))
-        A = 'L,4,L,6\n'
-        C = 'R,8\n'
+        print(reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out)))
+
+        mem, out, exit_code = self.computer.run_program(input=a, reset_memory=False, reset_pointer=False,
+                                                        reset_relative_pointer=False)
+
+        print(reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out)))
+
+        mem, out, exit_code = self.computer.run_program(input=b, reset_memory=False, reset_pointer=False,
+                                                        reset_relative_pointer=False)
+
+        print(reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out)))
+
+        mem, out, exit_code = self.computer.run_program(input=c, reset_memory=False, reset_pointer=False,
+                                                        reset_relative_pointer=False)
+
+        print(reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out)))
+
+        mem, out, exit_code = self.computer.run_program(input=self.to_input('n\n'), reset_memory=False, reset_pointer=False,
+                                                        reset_relative_pointer=False)
+
+        print(reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out[:-1])))
+
+        print('Total space dust collected: {}'.format(out[-1]))
+
+    def to_input(self, s):
+        return list(map(lambda c: ord(c), s))
 
 

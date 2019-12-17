@@ -71,6 +71,7 @@ class TestFrequencyStabilizer(TestCase):
 
         res = reduce(lambda x, y: str(x) + str(y), freq[:8])
 
+
         print('The first eight digits are: ' + res)
 
         assert_equal(res, '55078585')
