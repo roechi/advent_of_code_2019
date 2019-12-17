@@ -41,9 +41,7 @@ class CameraSystem:
         print('Sum of alignment params: {}'.format(np.array(list(map(lambda t: t[0] * t[1], intersections))).sum()))
 
     def rescue(self):
-        mem, out, exit_code = self.computer.run_program(parameters=[2])
-
-        #s = reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out))
+        self.computer.run_program(parameters=[2])
 
         main = 'B,B,A,C,B,C,A,C,B,A\n'
         A = 'L,6,L,4,R,8,R,8\n'
@@ -75,7 +73,8 @@ class CameraSystem:
 
         print(reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out)))
 
-        mem, out, exit_code = self.computer.run_program(input=self.to_input('n\n'), reset_memory=False, reset_pointer=False,
+        mem, out, exit_code = self.computer.run_program(input=self.to_input('n\n'), reset_memory=False,
+                                                        reset_pointer=False,
                                                         reset_relative_pointer=False)
 
         print(reduce(lambda x, y: x + y, map(lambda x: str(chr(x)), out[:-1])))
