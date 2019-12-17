@@ -1,0 +1,18 @@
+L, 4, L, 10, L, 6, L, 4, L, 10, L, 6, L, 6, L, 4, R, 8, R, 8, L, 6, R, 8,
+L, 10, L, 8, L 8, L, 4, L, 10, L, 6, L, 6, R, 8, L10, L, 8, L, 8, L, 6, L, 4
+R, 8, R, 8, L, 6, R, 8, L 10, L, 8, L 8, L, 4, L, 10, L, 6, L, 6, L, 4
+R, 8, R, 8
+
+A = L4
+B = L2L
+C = R, 4, L
+
+ABC
+
+ps ='L,4,L,10,L,6,L,4,L,10,L,6,L,6,L,4,R,8,R,8,L,6,R,8,L,10,L,8,L,8,L,4,L,10,L,6,L,6,R,8,L,10,L,8,L,8,L,6,L,4,R,8,R,8,L,6,R,8,L,10,L,8,L,8,L,4,L,10,L,6,L,6,L,4,R,8,R,8'
+
+ACACBACACB BCBABABBA BABBACBBBABBACABBBACBBBABBCBBBA
+               O
+A L4L
+B L
+C 6R
