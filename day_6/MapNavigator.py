@@ -36,10 +36,16 @@ class Node:
 
     def add(self, parent, data):
         if parent == self.data:
-            self.children.append(Node(data))
+            n = Node(data)
+            self.children.append(n)
+            n.parent = self
+            return n
         else:
             for node in self.children:
-                node.add(parent, data)
+                n = node.add(parent, data)
+                if n:
+                    return n
+
 
     def add_node(self, parent, node):
         if parent.data == self.data:
@@ -47,7 +53,7 @@ class Node:
             self.children.append(node)
         else:
             for node in self.children:
-                node.add(parent, node)
+                node.add_node(parent, node)
 
     def count_direct_children(self) -> int:
         count = len(self.children)

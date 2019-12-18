@@ -22,24 +22,32 @@ class DungeonCrawler:
 
     @staticmethod
     def find_next(dungeon: dict, pos: tuple, remaining_targets: dict, collected_keys: [str], current_path: [tuple], total_paths: [[tuple]], num_of_keys_to_find: int):
-        if not remaining_targets:
+        if not remaining_targets or all(['A' <= target <= 'B' for target in remaining_targets]):
             if num_of_keys_to_find == len(collected_keys):
                 total_paths.append(current_path)
         else:
             paths = dict()
             for target in remaining_targets:
-                path_tree = DungeonCrawler.BFS(dungeon, pos, remaining_targets[target])
-                current_node = path_tree
-                blocked = False
-                path = list()
-                while current_node.parent is not None and not blocked:
-                    if 65 <= ord(dungeon[current_node.parent.data]) <= 90:
-                        blocked = True
-                    else:
-                        path.append(current_node.parent.data)
-                    current_node = current_node.parent
-                if not blocked:
-                    paths[target] = path
+                if not 'A' <= target <= 'Z' or target.lower() in collected_keys:
+                    path_tree = DungeonCrawler.dijkstra(dungeon, pos, remaining_targets[target], collected_keys)[1]
+                    if path_tree:
+                        resolved_path = list()
+                        while path_tree.parent is not None:
+                            resolved_path.append(path_tree.data)
+                            path_tree = path_tree.parent
+                        resolved_path.reverse()
+
+                        blocked = False
+                        path = list()
+                        while resolved_path and not blocked:
+                            current_pos = resolved_path.pop()
+                            if 65 <= ord(dungeon[current_pos]) <= 90 and dungeon[current_pos] != target:
+                                blocked = True
+                            else:
+                                path.append(current_pos)
+
+                        if not blocked:
+                            paths[target] = path
 
             for path_key in paths.keys():
                 if not 65 <= ord(path_key) <= 90 or path_key.lower() in collected_keys:
@@ -61,6 +69,7 @@ class DungeonCrawler:
         key_positions = dict()
         door_positions = dict()
         droid_position = (0, 0)
+
 
         for y in range(len(map_str)):
             for x in range(len(map_str[y])):
@@ -91,9 +100,8 @@ class DungeonCrawler:
             children = list()
             for i in range(1, 5):
                 pos_to_check = tuple(np.array(v.data) + DungeonCrawler.direction(i))
-                if pos_to_check in map and pos_to_check not in discovered:
-                    if map[pos_to_check]:
-                        children.append(pos_to_check)
+                if pos_to_check in map and map[pos_to_check] != '#' and (map[pos_to_check] < 'A' or map[pos_to_check] > 'Z') and pos_to_check not in discovered:
+                    children.append(pos_to_check)
             for c in children:
                 if c not in discovered:
                     discovered.append(c)
@@ -102,30 +110,39 @@ class DungeonCrawler:
                     q.append(node)
 
     @staticmethod
-    def BFS_dijkstra(map: dict, start: tuple, target: tuple):
-        dist = 0
-        source = Node(start)
-        discovered = dict()
+    def dijkstra(dungeon: dict, start: tuple, target: tuple, keys: list):
+        distances = dict()
+        distances[start] = 0
+        tree = Node(start)
+        target_leaf = None
         q = list()
-        discovered[source.data] = 0
-        q.append(source)
-        while q:
-            v = q.pop()
-            if v.data == target:
-                return v
-            children = list()
-            for i in range(1, 5):
-                pos_to_check = tuple(np.array(v.data) + DungeonCrawler.direction(i))
-                if pos_to_check in map and pos_to_check not in discovered:
-                    if map[pos_to_check]:
+        q.append(start)
+        for v in dungeon.keys():
+            c = dungeon[v]
+            if c != '#' and v != start:
+                distances[v] = sys.maxsize
+                q.append(v)
 
-                        children.append(pos_to_check)
-            for c in children:
-                if c not in discovered:
-                    discovered.append(c)
-                    node = Node(c)
-                    v.add_node(v, node)
-                    q.append(node)
+        while q:
+            q.sort(key=lambda t: distances[t])
+            u = q.pop()
+            for i in range(1, 5):
+                v = tuple(np.array(u) + DungeonCrawler.direction(i))
+                if v in dungeon and dungeon[v] not in ['#', '\n']:
+                    if not ('A' <= dungeon[v] <= 'Z') or dungeon[v].lower() in keys:
+                        alt = distances[u] + 1
+                        if alt < distances[v] or distances[v] == sys.maxsize:
+                            distances[v] = alt
+                            v_node = tree.add(u, v)
+                            if v == target:
+                                target_leaf = v_node
+                            if v in q:
+                                q.remove(v)
+                            q.append(v)
+
+
+        return distances[target], target_leaf
+
 
     @staticmethod
     def backtrack(seen: dict, path: list, path_commands: list):
