@@ -84,4 +84,24 @@ class CameraSystem:
     def to_input(self, s):
         return list(map(lambda c: ord(c), s))
 
+    @staticmethod
+    def encode_LZW(s: str) -> [str]:
+        codes = list()
+        idx, off = 0, 1
 
+        scanned = False
+        while not scanned:
+            sub = s[idx:idx + off]
+
+            if sub not in codes:
+                codes.append(sub)
+                idx += off
+                off = 1
+            else:
+                off += 1
+
+            if idx + off > len(s):
+                scanned = True
+                codes.append(sub)
+
+        return codes

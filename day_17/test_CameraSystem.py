@@ -6,3 +6,7 @@ def test_show_image():
 
     cs.find_intersections()
     cs.rescue()
+
+def test_encoding():
+    lzw = CameraSystem.encode_LZW('AAAABBCDEABCDABCAAABCDEEEEEECBBBBBBDDAAE')
+    print(lzw)

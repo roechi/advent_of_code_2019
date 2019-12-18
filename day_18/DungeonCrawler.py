@@ -1,6 +1,6 @@
 from day_6.MapNavigator import Node
 import numpy as np
-
+import sys
 
 class DungeonCrawler:
     def __init__(self, map_str: [str]) -> None:
@@ -93,6 +93,32 @@ class DungeonCrawler:
                 pos_to_check = tuple(np.array(v.data) + DungeonCrawler.direction(i))
                 if pos_to_check in map and pos_to_check not in discovered:
                     if map[pos_to_check]:
+                        children.append(pos_to_check)
+            for c in children:
+                if c not in discovered:
+                    discovered.append(c)
+                    node = Node(c)
+                    v.add_node(v, node)
+                    q.append(node)
+
+    @staticmethod
+    def BFS_dijkstra(map: dict, start: tuple, target: tuple):
+        dist = 0
+        source = Node(start)
+        discovered = dict()
+        q = list()
+        discovered[source.data] = 0
+        q.append(source)
+        while q:
+            v = q.pop()
+            if v.data == target:
+                return v
+            children = list()
+            for i in range(1, 5):
+                pos_to_check = tuple(np.array(v.data) + DungeonCrawler.direction(i))
+                if pos_to_check in map and pos_to_check not in discovered:
+                    if map[pos_to_check]:
+
                         children.append(pos_to_check)
             for c in children:
                 if c not in discovered:
