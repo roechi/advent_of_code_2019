@@ -13,23 +13,28 @@ class DungeonCrawler:
         all_remaining_targets.update(self.doors)
         all_paths = []
         pos = self.droid_pos
+        max_path_len = [sys.maxsize]
+        #DungeonCrawler.find_next(self.map.copy(), pos, all_remaining_targets, list(), list(), all_paths, len(self.keys), max_path_len)
 
-        DungeonCrawler.find_next(self.map.copy(), pos, all_remaining_targets, list(), list(), all_paths, len(self.keys))
+
+        dist, paths = DungeonCrawler.dijkstra2(self.map.copy(), pos, all_remaining_targets, list())
 
         all_paths.sort(key=lambda p: len(p))
         return len(all_paths[0])
 
 
     @staticmethod
-    def find_next(dungeon: dict, pos: tuple, remaining_targets: dict, collected_keys: [str], current_path: [tuple], total_paths: [[tuple]], num_of_keys_to_find: int):
+    def find_next(dungeon: dict, pos: tuple, remaining_targets: dict, collected_keys: [str], current_path: [tuple], total_paths: [[tuple]], num_of_keys_to_find: int, max_len: [int]):
         if not remaining_targets or all(['A' <= target <= 'B' for target in remaining_targets]):
-            if num_of_keys_to_find == len(collected_keys):
+            if num_of_keys_to_find == len(collected_keys) and len(current_path) < max_len[-1]:
+                max_len.append(len(current_path))
                 total_paths.append(current_path)
         else:
             paths = dict()
-            for target in remaining_targets:
+            min_distances, path_trees = DungeonCrawler.dijkstra2(dungeon, pos, remaining_targets, collected_keys)
+            for target in path_trees.keys():
                 if not 'A' <= target <= 'Z' or target.lower() in collected_keys:
-                    path_tree = DungeonCrawler.dijkstra(dungeon, pos, remaining_targets[target], collected_keys)[1]
+                    path_tree = path_trees[target]
                     if path_tree:
                         resolved_path = list()
                         while path_tree.parent is not None:
@@ -61,7 +66,8 @@ class DungeonCrawler:
                     dun[rem[path_key]] = '.'
                     rem.pop(path_key)
                     p.extend(paths[path_key])
-                    DungeonCrawler.find_next(dun, next_pos, rem, coll, p, total_paths, num_of_keys_to_find)
+                    if len(p) < max_len[-1]:
+                        DungeonCrawler.find_next(dun, next_pos, rem, coll, p, total_paths, num_of_keys_to_find, max_len)
 
     @staticmethod
     def parse_map_str(map_str: [str]):
@@ -142,6 +148,39 @@ class DungeonCrawler:
 
 
         return distances[target], target_leaf
+
+    @staticmethod
+    def dijkstra2(dungeon: dict, start: tuple, targets: [tuple], keys: list):
+        distances = dict()
+        distances[start] = 0
+        tree = Node(start)
+        target_leafs = dict()
+        q = list()
+        q.append(start)
+        for v in dungeon.keys():
+            c = dungeon[v]
+            if c != '#' and v != start:
+                distances[v] = sys.maxsize
+                q.append(v)
+
+        while q:
+            q.sort(key=lambda t: distances[t])
+            u = q.pop()
+            for i in range(1, 5):
+                v = tuple(np.array(u) + DungeonCrawler.direction(i))
+                if v in dungeon and dungeon[v] not in ['#', '\n']:
+                    if not ('A' <= dungeon[v] <= 'Z') or dungeon[v].lower() in keys:
+                        alt = distances[u] + 1
+                        if alt < distances[v] or distances[v] == sys.maxsize:
+                            distances[v] = alt
+                            v_node = tree.add(u, v)
+                            if dungeon[v] in targets:
+                                target_leafs[dungeon[v]] = v_node
+                            if v in q:
+                                q.remove(v)
+                            q.append(v)
+
+        return distances, target_leafs
 
 
     @staticmethod
