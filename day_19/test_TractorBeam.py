@@ -11,8 +11,8 @@ def test_get_affected_fields_0():
 def test_get_affected_fields():
     tb = TractorBeam()
 
-    #affected_fields = tb.get_affected_fields(50, 50)
-    #print(affected_fields)
+    affected_fields = tb.get_affected_fields(50, 50)
+    print(affected_fields)
 
-    ship = tb.fit_better()
-    print(ship)
+    result = tb.fit_even_better()
+    print(result)
