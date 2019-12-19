@@ -1,6 +1,6 @@
 from nose.tools import assert_equal
 
-from day_18.DungeonCrawler import DungeonCrawler
+from day_18.DungeonCrawler2 import DungeonCrawler2
 
 
 def test_parse_map_str():
@@ -8,7 +8,7 @@ def test_parse_map_str():
                '#b.A.@.a#\n',
                '#########\n']
 
-    dc = DungeonCrawler(map_str)
+    dc = DungeonCrawler2(map_str)
 
 
 def test_solve():
@@ -16,7 +16,7 @@ def test_solve():
                '#b.A.@.a#\n',
                '#########\n']
 
-    dc = DungeonCrawler(map_str)
+    dc = DungeonCrawler2(map_str)
     min_path_len = dc.solve()
 
     assert_equal(min_path_len, 8)
@@ -29,13 +29,8 @@ def test_solve_2():
                '#d.....................#\n',
                '########################\n']
 
-    dc = DungeonCrawler(map_str)
-
-    dist, tree = dc.dijkstra(dc.map, (1, 1), (5, 1), ['d', 'e'])
-    assert_equal(dist, 4)
-
+    dc = DungeonCrawler2(map_str)
     min_path_len = dc.solve()
-
     assert_equal(min_path_len, 86)
 
 
@@ -46,7 +41,7 @@ def test_solve_3():
                '#.....@.a.B.c.d.A.e.F.g#\n',
                '########################\n']
 
-    dc = DungeonCrawler(map_str)
+    dc = DungeonCrawler2(map_str)
 
     min_path_len = dc.solve()
 
@@ -64,8 +59,30 @@ def test_solve_4():
                '#l.F..d...h..C.m#\n',
                '#################\n']
 
-    dc = DungeonCrawler(map_str)
+    dc = DungeonCrawler2(map_str)
 
     min_path_len = dc.solve()
 
     assert_equal(min_path_len, 136)
+
+def test_solve_part_1():
+    t = open('../resources/input_18.txt')
+    l = t.readlines()
+    t.close()
+
+    dc = DungeonCrawler2(l)
+
+    min_path_len = dc.solve()
+
+    assert_equal(min_path_len, 3586)
+
+def test_solve_part_2():
+    t = open('../resources/input_18_2.txt')
+    l = t.readlines()
+    t.close()
+
+    dc = DungeonCrawler2(l)
+
+    min_path_len = dc.solve()
+
+    assert_equal(min_path_len, 1974)
